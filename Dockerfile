@@ -5,6 +5,10 @@ ARG UID=1001
 ARG GID=1001
 ARG DEBIAN_FRONTEND=noninteractive
 
+RUN rm -f /etc/dpkg/dpkg.cfg.d/01_nodoc /etc/dpkg/dpkg.cfg.d/docker || true
+
+RUN yes | unminimize
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc g++ gcc-multilib \
     gdb \
@@ -12,7 +16,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     binutils \
     zsh git curl ca-certificates \
     neovim \
-    sudo \
+    sudo tmux\
+    man-db manpages manpages-dev manpages-posix manpages-posix-dev \
+    less groff-base locales \
+ && sed -i 's/# en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen \
+ && locale-gen \
+ && mandb -c \
  && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -g ${GID} ${USER} \
@@ -32,7 +41,7 @@ COPY --chown=${UID}:${GID} zinit-preload.zsh /home/${USER}/.zinit-preload.zsh
 
 RUN source ~/.zinit-preload.zsh; zcompile ~/.zshrc
 
-COPY --chown=${UID}:${GID} zprofile /home/${USER_NAME}/.zprofile
+COPY --chown=${UID}:${GID} zprofile /home/${USER}/.zprofile
 
 SHELL ["/bin/sh","-c"]
 
