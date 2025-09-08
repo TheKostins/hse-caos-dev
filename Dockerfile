@@ -10,13 +10,14 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/01_nodoc /etc/dpkg/dpkg.cfg.d/docker || true
 RUN yes | unminimize && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential pkg-config \
     gcc g++ gcc-multilib \
-    gdb cmake clang-format\
+    gdb cmake clang-format \
     nasm fasm \
     binutils \
     zsh git curl ca-certificates \
     neovim \
-    sudo tmux\
+    sudo tmux \
     man-db manpages manpages-dev manpages-posix manpages-posix-dev \
     less groff-base locales \
  && sed -i 's/# en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen \
