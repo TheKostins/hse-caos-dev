@@ -34,17 +34,6 @@ RUN groupadd -g ${GID} ${USER} \
 USER ${USER}
 WORKDIR /project
 
-SHELL ["/usr/bin/zsh","-lc"]
-RUN curl -fsSL https://git.io/zinit-install | zsh
-
-COPY --chown=${USER}:${GID} zshrc /home/${USER}/.zshrc
-COPY --chown=${UID}:${GID} zinit-preload.zsh /home/${USER}/.zinit-preload.zsh
-
-RUN source ~/.zinit-preload.zsh; zcompile ~/.zshrc
-
-COPY --chown=${UID}:${GID} zprofile /home/${USER}/.zprofile
-
-
 USER ${USER}
 ENV HOME=/home/${USER} \
     CARGO_HOME=/home/${USER}/.cargo \
@@ -57,6 +46,24 @@ RUN curl -sSf https://sh.rustup.rs | sh -s -- -y \
  && rustup component add --toolchain nightly rust-src rustfmt clippy \
  && rustc --version && cargo --version
 
+
+
+SHELL ["/usr/bin/zsh","-lc"]
+RUN curl -fsSL https://git.io/zinit-install | zsh
+
+COPY --chown=${USER}:${GID} zshrc /home/${USER}/.zshrc
+COPY --chown=${UID}:${GID} zinit-preload.zsh /home/${USER}/.zinit-preload.zsh
+
+RUN source ~/.zinit-preload.zsh; zcompile ~/.zshrc
+
+COPY --chown=${UID}:${GID} zprofile /home/${USER}/.zprofile
+
 SHELL ["/bin/sh","-c"]
+
+RUN mkdir -p /home/${USER}/.cargo/registry \
+             /home/${USER}/.cargo/git \
+ && chown -R ${UID}:${GID} /home/${USER}/.cargo
+
+VOLUME ["/home/dev/.cargo/registry", "/home/dev/.cargo/git"]
 
 CMD ["/usr/bin/zsh"]
