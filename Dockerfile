@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     nasm fasm \
     binutils \
     zsh git curl ca-certificates \
-    neovim \
+    neovim strace valgrind\
     sudo tmux \
     man-db manpages manpages-dev manpages-posix manpages-posix-dev \
     less groff-base locales \
